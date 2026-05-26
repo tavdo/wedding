@@ -1,0 +1,25 @@
+import { NextResponse } from "next/server";
+import type { WeddingData } from "@/types";
+import { isAdminAuthenticated } from "@/lib/auth";
+import { getWeddingData, saveWeddingData } from "@/lib/data-store";
+
+export async function GET() {
+  if (!(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: "არაავტორიზებული" }, { status: 401 });
+  }
+  return NextResponse.json(await getWeddingData());
+}
+
+export async function PUT(request: Request) {
+  if (!(await isAdminAuthenticated())) {
+    return NextResponse.json({ error: "არაავტორიზებული" }, { status: 401 });
+  }
+
+  try {
+    const body = (await request.json()) as WeddingData;
+    const saved = await saveWeddingData(body);
+    return NextResponse.json(saved);
+  } catch {
+    return NextResponse.json({ error: "შენახვა ვერ მოხერხდა" }, { status: 500 });
+  }
+}

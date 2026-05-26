@@ -1,0 +1,178 @@
+import type { WeddingData } from "@/types";
+
+export const WEDDING_DATA: WeddingData = {
+  couple: {
+    partner1: "ალექსანდრე",
+    partner2: "იზაბელა",
+    initials: "ა & ი",
+    tagline: "ორი სული, ერთი უკვდავი გზა",
+  },
+  date: "2026-09-14T16:00:00",
+  dateFormatted: "14 სექტემბერი, 2026",
+  venue: {
+    ceremony: {
+      name: "Château de Vaux-le-Vicomte",
+      address: "77950 Maincy",
+      city: "პარიზი, საფრანგეთი",
+      time: "16:00",
+      coordinates: { lat: 48.5658, lng: 2.7142 },
+      description:
+        "არქიტექტურული შედევრი ფრანგული ბაღებით, სადაც ისტორია რომანტიკას ხვდება.",
+    },
+    reception: {
+      name: "Les Orangeries du Château",
+      address: "77950 Maincy",
+      city: "პარიზი, საფრანგეთი",
+      time: "19:00",
+      coordinates: { lat: 48.5662, lng: 2.7148 },
+      description:
+        "საღამო სანთლების ნათებაში, შამპანით და ცეკვით ცის ქვეშ.",
+    },
+  },
+  dressCode: "Black Tie Optional · რბილი ვარდისფერი და შამპანის ტონები მისასალმებელია",
+  schedule: [
+    {
+      time: "15:30",
+      title: "სტუმრების მისვლა",
+      description: "მისალმების შამპანი ბაღებში",
+    },
+    {
+      time: "16:00",
+      title: "ცერემონია",
+      description: "ფიცის მიცემა Grand Salon-ში",
+    },
+    {
+      time: "17:30",
+      title: "კოქტეილის საათი",
+      description: "კანაპეები და პორტრეტები ბაღებში",
+    },
+    {
+      time: "19:00",
+      title: "რეცეპცია",
+      description: "ვახშამი, ლუდები და ზეიმი",
+    },
+    {
+      time: "23:00",
+      title: "პირველი საცეული",
+      description: "მომენტი ვარსკვლავების ქვეშ",
+    },
+  ],
+  loveStory: [
+    {
+      id: "chapter-1",
+      year: "2019",
+      title: "შემთხვევითი შეხვედრა",
+      content:
+        "წვიმიან შუადღეს მარეის უბანში, ორი უცნობი ერთსა და იმავე წიგნს მიაწვდიდნენ პატარა ანტიკვარიატის მაღაზიაში. ბოდიშმა დაიწყო საუბარმა, რომელიც არც ერთს არ უნდოდა დაედო.",
+      image:
+        "https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80",
+      accent: "პარიზი, შემოდგომა",
+    },
+    {
+      id: "chapter-2",
+      year: "2021",
+      title: "წერილები ოკეანეებს მიღმა",
+      content:
+        "ახლა გიწვევტ, რომ იყოთ ჩვენი ისტორიის მოწმე — სიყვარულის, ოჯახისა და ლამაზი ცხოვრების ძეიმს, რომელსაც ერთად ვგამოწვებტ.",
+      image:
+        "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1200&q=80",
+      accent: "მელანში დაწერილი",
+    },
+    {
+      id: "chapter-3",
+      year: "2024",
+      title: "შეთავაზება",
+      content:
+        "Pont des Arts-ის ხიდზე, ოქროსფერ საათზე, ალექსანდრე მხლზე დაეშვა. იზაბელამ «კი» უთხრა კითხვის დაწძებამდე — თითქოს გულმა უკვე უპასუხა.",
+      image:
+        "https://images.unsplash.com/photo-1465497426031-b4251a645b41?w=1200&q=80",
+      accent: "ოქროსფერი საათი",
+    },
+    {
+      id: "chapter-4",
+      year: "2026",
+      title: "უკვდავება იწყება",
+      content:
+        "ახლა გიწვევტ, რომ იყოთ ჩვენი ისტორიის მოწმე — სიყვარულის, ოჯახისა და ლამაზი ცხოვრების ძეიმს, რომელსაც ერთად ვგამოწვებტ.",
+      image:
+        "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=1200&q=80",
+      accent: "ჩვენი ქორწილი",
+    },
+  ],
+  gallery: [
+    {
+      id: "g1",
+      src: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+      alt: "წყვილი პარიზში",
+      width: 800,
+      height: 1200,
+    },
+    {
+      id: "g2",
+      src: "https://images.unsplash.com/photo-1469371670803-b013a5522471?w=800&q=80",
+      alt: "პარიზის არქიტექტურა",
+      width: 800,
+      height: 600,
+    },
+    {
+      id: "g3",
+      src: "https://images.unsplash.com/photo-1520854221256-174851aa3b85?w=800&q=80",
+      alt: "რომანტიკული მომენტი",
+      width: 800,
+      height: 1000,
+    },
+    {
+      id: "g4",
+      src: "https://images.unsplash.com/photo-1465497426031-b4251a645b41?w=800&q=80",
+      alt: "ოქროსფერი საათი",
+      width: 800,
+      height: 600,
+    },
+    {
+      id: "g5",
+      src: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?w=800&q=80",
+      alt: "ყვავილების კომპოზიცია",
+      width: 800,
+      height: 1100,
+    },
+    {
+      id: "g6",
+      src: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&q=80",
+      alt: "საღამოს ზეიმი",
+      width: 800,
+      height: 700,
+    },
+    {
+      id: "g7",
+      src: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&q=80",
+      alt: "ინტიმური პორტრეტი",
+      width: 800,
+      height: 900,
+    },
+    {
+      id: "g8",
+      src: "https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=800&q=80",
+      alt: "ქორწილის ადგილი",
+      width: 800,
+      height: 650,
+    },
+  ],
+  quote: {
+    text: "სიყვარული არ არის იმაში, რამდენი დღე, თვე თუ წელი გავატარეთ ერთად. სიყვარული არის იმაში, რამდენად გვიყვარს ერთმანეთი ყოველდღე.",
+    author: "უცნობი",
+  },
+  social: [
+    { platform: "instagram", url: "#", label: "Instagram" },
+    { platform: "pinterest", url: "#", label: "Pinterest" },
+  ],
+  music: {
+    title: "Clair de Lune",
+    artist: "Debussy",
+    src: "/audio/ambient-piano.mp3",
+  },
+  images: {
+    hero: "https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80",
+    finale: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=1920&q=80",
+    preloader: "https://images.unsplash.com/photo-1519741497674-611481863552?w=1920&q=80",
+  },
+};
