@@ -63,7 +63,35 @@ https://yoursite.com/?guest=Sarah%20Johnson&id=abc123
 
 Optional language override: `?lang=fr`
 
-## Production
+## Deploy on Netlify
+
+1. Push this repo to GitHub ([tavdo/wedding](https://github.com/tavdo/wedding)).
+2. In [Netlify](https://app.netlify.com), click **Add new site → Import an existing project** and connect the repo.
+3. Netlify auto-detects Next.js via `netlify.toml`. Build command: `npm run build`.
+4. Add **Environment variables** (Site settings → Environment variables):
+
+   | Variable | Value |
+   |----------|-------|
+   | `ADMIN_PASSWORD` | Your admin login password |
+   | `ADMIN_SECRET` | Long random string (session signing) |
+   | `NODE_VERSION` | `20` (optional, already in netlify.toml) |
+
+5. Deploy. Your site will be live at `https://your-site.netlify.app`.
+
+### Admin panel (production)
+
+- Login: `https://your-site.netlify.app/admin/login`
+- Dashboard: `https://your-site.netlify.app/admin`
+
+On Netlify, wedding content, RSVPs, and uploaded photos are stored in **Netlify Blobs** (persistent across deploys). Locally, files are stored in `data/` and `public/uploads/`.
+
+### Notes
+
+- Change `ADMIN_PASSWORD` and `ADMIN_SECRET` before going live.
+- Uploaded images are served from `/api/uploads/...` on Netlify.
+- Free Netlify tier includes Blobs storage suitable for a wedding site.
+
+## Production (self-hosted)
 
 ```bash
 npm run build

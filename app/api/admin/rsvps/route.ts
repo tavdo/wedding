@@ -7,8 +7,16 @@ export async function GET() {
     return NextResponse.json({ error: "არაავტორიზებული" }, { status: 401 });
   }
 
-  const [rsvps, stats] = await Promise.all([getRSVPs(), getAdminStats()]);
-  return NextResponse.json({ rsvps, stats });
+  try {
+    const [rsvps, stats] = await Promise.all([getRSVPs(), getAdminStats()]);
+    return NextResponse.json({ rsvps, stats });
+  } catch (err) {
+    console.error("Failed to load RSVPs/admin stats", err);
+    return NextResponse.json(
+      { error: "სერვერის შეცდომა" },
+      { status: 500 }
+    );
+  }
 }
 
 export async function DELETE(request: Request) {
@@ -16,14 +24,22 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "არაავტორიზებული" }, { status: 401 });
   }
 
-  const { searchParams } = new URL(request.url);
-  const id = searchParams.get("id");
-  if (!id) {
-    return NextResponse.json({ error: "ID აუცილებელია" }, { status: 400 });
-  }
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    if (!id) {
+      return NextResponse.json({ error: "ID აუცილებელია" }, { status: 400 });
+    }
 
-  await deleteRSVP(id);
-  const stats = await getAdminStats();
-  const rsvps = await getRSVPs();
-  return NextResponse.json({ rsvps, stats });
+    await deleteRSVP(id);
+    const stats = await getAdminStats();
+    const rsvps = await getRSVPs();
+    return NextResponse.json({ rsvps, stats });
+  } catch (err) {
+    console.error("Failed to delete RSVP", err);
+    return NextResponse.json(
+      { error: "სერვერის შეცდომა" },
+      { status: 500 }
+    );
+  }
 }

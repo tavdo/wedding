@@ -2,6 +2,15 @@ import { promises as fs } from "fs";
 import path from "path";
 import type { AdminStats, RSVPRecord, WeddingData } from "@/types";
 import { WEDDING_DATA } from "@/constants/wedding-data";
+import { isNetlifyRuntime } from "@/lib/is-netlify";
+import {
+  blobGetRSVPs,
+  blobGetUpload,
+  blobGetWedding,
+  blobSaveRSVPs,
+  blobSaveUpload,
+  blobSaveWedding,
+} from "@/lib/blob-store";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 const WEDDING_FILE = path.join(DATA_DIR, "wedding.json");
@@ -25,6 +34,18 @@ function defaultWeddingData(): WeddingData {
 }
 
 export async function getWeddingData(): Promise<WeddingData> {
+  if (isNetlifyRuntime()) {
+    const stored = await blobGetWedding();
+    if (stored) {
+      if (!stored.images) stored.images = defaultWeddingData().images;
+      return stored;
+    }
+    const initial = defaultWeddingData();
+    await blobSaveWedding(initial);
+    await blobSaveRSVPs([]);
+    return initial;
+  }
+
   await ensureDataDir();
   try {
     const raw = await fs.readFile(WEDDING_FILE, "utf-8");
@@ -41,12 +62,21 @@ export async function getWeddingData(): Promise<WeddingData> {
 }
 
 export async function saveWeddingData(data: WeddingData): Promise<WeddingData> {
+  if (isNetlifyRuntime()) {
+    await blobSaveWedding(data);
+    return data;
+  }
+
   await ensureDataDir();
   await fs.writeFile(WEDDING_FILE, JSON.stringify(data, null, 2), "utf-8");
   return data;
 }
 
 export async function getRSVPs(): Promise<RSVPRecord[]> {
+  if (isNetlifyRuntime()) {
+    return blobGetRSVPs();
+  }
+
   await ensureDataDir();
   try {
     const raw = await fs.readFile(RSVP_FILE, "utf-8");
@@ -67,14 +97,27 @@ export async function addRSVP(
     createdAt: new Date().toISOString(),
   };
   rsvps.unshift(record);
-  await fs.writeFile(RSVP_FILE, JSON.stringify(rsvps, null, 2), "utf-8");
+
+  if (isNetlifyRuntime()) {
+    await blobSaveRSVPs(rsvps);
+  } else {
+    await ensureDataDir();
+    await fs.writeFile(RSVP_FILE, JSON.stringify(rsvps, null, 2), "utf-8");
+  }
+
   return record;
 }
 
 export async function deleteRSVP(id: string): Promise<void> {
   const rsvps = await getRSVPs();
   const filtered = rsvps.filter((r) => r.id !== id);
-  await fs.writeFile(RSVP_FILE, JSON.stringify(filtered, null, 2), "utf-8");
+
+  if (isNetlifyRuntime()) {
+    await blobSaveRSVPs(filtered);
+  } else {
+    await ensureDataDir();
+    await fs.writeFile(RSVP_FILE, JSON.stringify(filtered, null, 2), "utf-8");
+  }
 }
 
 export async function getAdminStats(): Promise<AdminStats> {
@@ -101,16 +144,53 @@ export async function saveUploadedFile(
   file: File,
   prefix = "photo"
 ): Promise<{ url: string; width: number; height: number }> {
-  await ensureDataDir();
   const ext = path.extname(file.name) || ".jpg";
   const safeName = `${prefix}-${Date.now()}${ext}`;
+  const arrayBuffer = await file.arrayBuffer();
+
+  if (isNetlifyRuntime()) {
+    await blobSaveUpload(safeName, arrayBuffer, file.type || "image/jpeg");
+    return {
+      url: `/api/uploads/${safeName}`,
+      width: 800,
+      height: 1000,
+    };
+  }
+
+  await ensureDataDir();
   const filePath = path.join(UPLOADS_DIR, safeName);
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await fs.writeFile(filePath, buffer);
+  await fs.writeFile(filePath, Buffer.from(arrayBuffer));
 
   return {
     url: `/uploads/${safeName}`,
     width: 800,
     height: 1000,
   };
+}
+
+export async function getUploadedFile(filename: string) {
+  if (isNetlifyRuntime()) {
+    return blobGetUpload(filename);
+  }
+
+  const filePath = path.join(UPLOADS_DIR, filename);
+  try {
+    const data = await fs.readFile(filePath);
+    const ext = path.extname(filename).toLowerCase();
+    const contentType =
+      ext === ".png"
+        ? "image/png"
+        : ext === ".webp"
+          ? "image/webp"
+          : ext === ".gif"
+            ? "image/gif"
+            : "image/jpeg";
+
+    return {
+      data: data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer,
+      metadata: { contentType },
+    };
+  } catch {
+    return null;
+  }
 }
