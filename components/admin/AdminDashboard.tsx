@@ -52,29 +52,44 @@ export function AdminDashboard() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [loadError, setLoadError] = useState<string>("");
 
   const loadAll = useCallback(async () => {
-    const session = await fetch("/api/auth/session");
-    if (!session.ok) {
-      router.push("/admin/login");
-      return;
-    }
-    const { authenticated } = await session.json();
-    if (!authenticated) {
-      router.push("/admin/login");
-      return;
-    }
+    try {
+      setLoadError("");
 
-    const [weddingRes, rsvpRes] = await Promise.all([
-      fetch("/api/admin/wedding"),
-      fetch("/api/admin/rsvps"),
-    ]);
+      const session = await fetch("/api/auth/session");
+      if (!session.ok) {
+        router.push("/admin/login");
+        return;
+      }
+      const { authenticated } = await session.json();
+      if (!authenticated) {
+        router.push("/admin/login");
+        return;
+      }
 
-    if (weddingRes.ok) setData(await weddingRes.json());
-    if (rsvpRes.ok) {
-      const json = await rsvpRes.json();
-      setRsvps(json.rsvps);
-      setStats(json.stats);
+      const [weddingRes, rsvpRes] = await Promise.all([
+        fetch("/api/admin/wedding"),
+        fetch("/api/admin/rsvps"),
+      ]);
+
+      if (!weddingRes.ok) {
+        setLoadError(`Wedding API error: ${weddingRes.status}`);
+        return;
+      }
+
+      setData(await weddingRes.json());
+
+      if (rsvpRes.ok) {
+        const json = await rsvpRes.json();
+        setRsvps(json.rsvps);
+        setStats(json.stats);
+      } else {
+        setMessage(`RSVP API error: ${rsvpRes.status}`);
+      }
+    } catch {
+      setLoadError("Network error");
     }
   }, [router]);
 
@@ -159,6 +174,23 @@ export function AdminDashboard() {
       loveStory: data.loveStory.map((c) => (c.id === id ? { ...c, [field]: value } : c)),
     });
   };
+
+  if (loadError) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#0d0c0b] px-6 text-center text-warm-white">
+        <p className="text-champagne">შეცდომა: {loadError}</p>
+        <button
+          onClick={loadAll}
+          className="bg-champagne/90 px-4 py-2 text-xs uppercase tracking-widest text-matte-black hover:bg-champagne"
+        >
+          ხელახლა ცდა
+        </button>
+        <a href="/admin/login" className="text-xs text-warm-white/50 hover:text-champagne">
+          შესვლა
+        </a>
+      </div>
+    );
+  }
 
   if (!data) {
     return (

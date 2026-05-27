@@ -7,7 +7,12 @@ export async function GET() {
   if (!(await isAdminAuthenticated())) {
     return NextResponse.json({ error: "არაავტორიზებული" }, { status: 401 });
   }
-  return NextResponse.json(await getWeddingData());
+  try {
+    return NextResponse.json(await getWeddingData());
+  } catch (err) {
+    console.error("Failed to load wedding data", err);
+    return NextResponse.json({ error: "სერვერის შეცდომა" }, { status: 500 });
+  }
 }
 
 export async function PUT(request: Request) {
